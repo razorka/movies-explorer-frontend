@@ -5,6 +5,8 @@ import Header from '../Header/Header';
 
 import Main from '../Main/Main';
 
+import Movies from '../Movies/Movies';
+
 import Modal from '../Modal/Modal';
 
 import MobileNavigation from '../MobileNavigation/MobileNavigation';
@@ -51,7 +53,7 @@ function App() {
         <Route
           path="/movies"
         >
-          <h1>Фильмы</h1>
+          <Movies />
         </Route>
         <Route
           path="/saved-movies"
