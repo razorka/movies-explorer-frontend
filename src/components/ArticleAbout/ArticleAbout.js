@@ -7,6 +7,7 @@ function ArticleAbout(props) {
   const STYLE_SETTINGS = {
     article: 'article-about',
     title: 'article-about__title',
+    articleTextContainer: 'article-about__text-container',
     text: 'article-about__text',
   };
 

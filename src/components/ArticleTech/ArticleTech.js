@@ -6,6 +6,7 @@ function ArticleTech(props) {
   const STYLE_SETTINGS = {
     article: 'article-tech',
     title: 'article-tech__title',
+    articleTextContainer: 'article-tech__text-container',
     text: 'article-tech__text',
   };
 
