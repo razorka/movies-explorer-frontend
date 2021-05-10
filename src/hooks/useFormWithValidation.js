@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-export function useFormWithValidation() {
+export default function useFormWithValidation() {
 
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
@@ -9,7 +9,7 @@ export function useFormWithValidation() {
   const handleChange = (evt) => {
     const target = evt.target;
     const name = target.name;
-    const value = target.value;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
 
     setValues({
       ...values,
@@ -21,8 +21,7 @@ export function useFormWithValidation() {
       [name]: target.validationMessage
     });
 
-    setIsValid(target.closest('.form').checkValidity());
-
+    setIsValid(target.closest('form').checkValidity());
   }
 
   const resetForm = useCallback(
@@ -39,7 +38,8 @@ export function useFormWithValidation() {
     errors,
     isValid,
     handleChange,
-    resetForm
+    resetForm,
   };
-
 };
+
+

@@ -10,8 +10,6 @@ import AboutMe from '../AboutMe/AboutMe';
 
 import Techs from '../Techs/Techs';
 
-import Footer from '../Footer/Footer';
-
 function Main() {
   return (
     <main
@@ -23,7 +21,6 @@ function Main() {
       <AboutProject />
       <Techs />
       <AboutMe />
-      <Footer />
     </main>
   )
 }

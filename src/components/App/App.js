@@ -1,7 +1,9 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import Header from '../Header/Header';
+
+import Modal from '../Modal/Modal';
 
 import Main from '../Main/Main';
 
@@ -9,9 +11,11 @@ import SavedMovies from '../SavedMovies/SavedMovies';
 
 import Movies from '../Movies/Movies';
 
+import Register from '../Register/Register';
 
+import Login from '../Login/Login';
 
-import Modal from '../Modal/Modal';
+import Footer from '../Footer/Footer';
 
 import MobileNavigation from '../MobileNavigation/MobileNavigation';
 
@@ -39,14 +43,21 @@ function App() {
     setMenuIsOpen(false);
   };
 
+  const exclusionRoutesPathsArray = [
+    '/signin',
+    '/signup',
+  ];
+
   return (
     <div className="app">
-      <Header
-        loggedIn={loggedIn}
-        onSignup={handleSignup}
-        onSignin={handleSignin}
-        onOpenMenu={setOpenMenu}
-      />
+      {useRouteMatch(exclusionRoutesPathsArray) ? null : (
+        <Header
+          loggedIn={loggedIn}
+          onSignup={handleSignup}
+          onSignin={handleSignin}
+          onOpenMenu={setOpenMenu}
+        />
+      )}
       <Switch>
         <Route
           exact
@@ -72,14 +83,17 @@ function App() {
         <Route
           path="/signup"
         >
-          <h1>Регистрация</h1>
+          <Register />
         </Route>
         <Route
           path="/signin"
         >
-          <h1>Авторизация</h1>
+          <Login />
         </Route>
-      </Switch>
+        </Switch>
+      {useRouteMatch(exclusionRoutesPathsArray) ? null : (
+        <Footer />
+      )}
       {menuIsOpen && (
         <Modal
           modalIsOpen={menuIsOpen}

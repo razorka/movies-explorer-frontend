@@ -6,30 +6,20 @@ import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 import SubmitButton from "../SubmitButton/SubmitButton";
 
+import useFormWithValidation from '../../hooks/useFormWithValidation';
+
 function SearchForm() {
 
-  const [values, setValues] = React.useState({});
-
-  const handleChange = (evt) => {
-    const target = evt.target;
-    const name = target.name;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-
-    setValues({
-      ...values,
-      [name]: value,
-    });
-  };
-
-  const resetForm = React.useCallback(
-    (newValues = {}) => {
-      setValues(newValues);
-    },
-    [setValues]
-  );
+  const {
+    values,
+    isValid,
+    handleChange,
+    resetForm
+  } = useFormWithValidation({});
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
+    console.table(values);
     resetForm();
   };
 
@@ -91,7 +81,7 @@ function SearchForm() {
       <SubmitButton
         className={SEARCH_FORM_STYLE_SETTINGS.submitButton}
         settings={SUBMIT_BUTTON_SETTINGS}
-        disabled={!values.search && !values.shortfilm && true}
+        disabled={!isValid}
       />
     </form>
   )
