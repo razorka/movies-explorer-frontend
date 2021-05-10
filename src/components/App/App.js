@@ -5,7 +5,11 @@ import Header from '../Header/Header';
 
 import Main from '../Main/Main';
 
+import SavedMovies from '../SavedMovies/SavedMovies';
+
 import Movies from '../Movies/Movies';
+
+
 
 import Modal from '../Modal/Modal';
 
@@ -58,7 +62,7 @@ function App() {
         <Route
           path="/saved-movies"
         >
-          <h1>Сохраненные фильмы</h1>
+          <SavedMovies />
         </Route>
         <Route
           path="/profile"

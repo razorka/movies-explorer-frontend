@@ -53,3 +53,11 @@
 @import url(./components/Footer/Footer.css);
 
 @import url(./components/FooterList/FooterList.css);
+
+@import url(./components/MoviesCardList/MoviesCardList.css);
+
+@import url(./components/MoviesCard/MoviesCard.css);
+
+@import url(./components/LikesButton/LikesButton.css);
+
+@import url(./components/ShowMoreButton/ShowMoreButton.css);
