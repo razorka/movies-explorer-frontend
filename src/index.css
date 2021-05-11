@@ -77,3 +77,15 @@
 @import url(./components/RouteLink/RouteLink.css);
 
 @import url(./components/FormTitle/FormTitle.css);
+
+@import url(./components/Profile/Profile.css);
+
+@import url(./components/ProfileForm/ProfileForm.css);
+
+@import url(./components/ProfileEditButton/ProfileEditButton.css);
+
+@import url(./components/ProfileUpdateError/ProfileUpdateError.css);
+
+@import url(./components/ProfileSignOutButton/ProfileSignOutButton.css);
+
+@import url(./components/NotFound/NotFound.css);

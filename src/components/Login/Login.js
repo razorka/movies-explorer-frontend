@@ -2,8 +2,6 @@ import React from 'react';
 
 import AuthForm from '../AuthForm/AuthForm';
 
-import AuthHeader from '../AuthHeader/AuthHeader';
-
 import useFormWithValidation from '../../hooks/useFormWithValidation';
 
 function Login() {
@@ -76,10 +74,8 @@ function Login() {
     <main
       className={LOGIN_STYLE_SETTINGS.main}
     >
-      <AuthHeader
-        titleText={TITLE_TEXT}
-      />
       <AuthForm
+        titleText={TITLE_TEXT}
         inputsData={INPUTS_DATA}
         routeLinkSettings={ROUTE_LINK_SETTINGS}
         onChange={handleChange}

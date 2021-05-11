@@ -1,4 +1,7 @@
 .account-link {
+  width: 100%;
+  max-width: 100px;
+  max-height: 32px;
   font-family: 'Inter', Arial, sans-serif;
   font-weight: 500;
   font-style: normal;
@@ -6,10 +9,14 @@
   line-height: 1.14;
   color: #000000;
   text-decoration: none;
+  background-color: #FFFFFF;
+  border: 1px solid #FFFFFF;
+  border-radius: 40px;
   display: flex;
   align-items: center;
   opacity: 1;
   transition: opacity .3s ease;
+  padding: 3.5px 10px 3.5px 11px;
 }
 
 .account-link:hover,
@@ -20,8 +27,8 @@
 .account-link__icon {
   padding: 8px 7px;
   background: #F9F9F9;
-  border-radius: 4px;
-  margin-left: 17px;
+  border-radius: 50px;
+  margin-left: 7px;
 }
 
 @media screen and (max-width: 1023px) {

@@ -41,6 +41,7 @@ function SearchForm() {
     name: 'search',
     minLength: 1,
     maxLength: 30,
+    required: true,
   };
 
   const SHORTFILM_FILTER_CHECKBOX_INPUT_SETTINGS = {
@@ -67,7 +68,6 @@ function SearchForm() {
         className={SEARCH_FORM_STYLE_SETTINGS.textInput}
         onChange={handleChange}
         value={values.search}
-        required={values.shortfilm ? false : true}
       />
       <FilterCheckbox
         inputClassName={SEARCH_FORM_STYLE_SETTINGS.checkboxInput}

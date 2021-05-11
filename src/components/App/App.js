@@ -1,9 +1,11 @@
 import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch, useHistory } from 'react-router-dom';
 
 import Header from '../Header/Header';
 
 import Modal from '../Modal/Modal';
+
+import Profile from '../Profile/Profile';
 
 import Main from '../Main/Main';
 
@@ -14,6 +16,8 @@ import Movies from '../Movies/Movies';
 import Register from '../Register/Register';
 
 import Login from '../Login/Login';
+
+import NotFound from '../NotFound/NotFound';
 
 import Footer from '../Footer/Footer';
 
@@ -27,12 +31,19 @@ function App() {
 
   const [menuIsOpen, setMenuIsOpen] = React.useState(false);
 
+  const history = useHistory();
+
   const handleSignup = () => {
     setLoggedIn(true);
   };
 
   const handleSignin = () => {
     setLoggedIn(true);
+  };
+
+  const handleSignOut = () => {
+    setLoggedIn(false);
+    history.push('/');
   };
 
   const setOpenMenu = () => {
@@ -44,9 +55,21 @@ function App() {
   };
 
   const exclusionRoutesPathsArray = [
+
     '/signin',
     '/signup',
   ];
+
+  const exclusionRoutesPathsArrayFooter = [
+    '/signin',
+    '/signup',
+    '/profile',
+  ];
+
+  const currentUserData = {
+    name: 'Николай',
+    email: 'borring@mail.ru'
+  };
 
   return (
     <div className="app">
@@ -78,7 +101,10 @@ function App() {
         <Route
           path="/profile"
         >
-          <h1>Профиль</h1>
+           <Profile
+            currentUserData={currentUserData}
+            onSignOut={handleSignOut}
+          />
         </Route>
         <Route
           path="/signup"
@@ -90,8 +116,13 @@ function App() {
         >
           <Login />
         </Route>
+        <Route
+            path="*"
+          >
+            <NotFound />
+          </Route>
         </Switch>
-      {useRouteMatch(exclusionRoutesPathsArray) ? null : (
+      {useRouteMatch(exclusionRoutesPathsArrayFooter) ? null : (
         <Footer />
       )}
       {menuIsOpen && (

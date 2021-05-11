@@ -1,7 +1,5 @@
 import React from 'react';
 
-import AuthHeader from '../AuthHeader/AuthHeader';
-
 import AuthForm from '../AuthForm/AuthForm';
 
 import useFormWithValidation from '../../hooks/useFormWithValidation';
@@ -82,10 +80,8 @@ function Register() {
     <main
       className={REGISTER_STYLE_SETTINGS.main}
     >
-      <AuthHeader
-        titleText={TITLE_TEXT}
-      />
       <AuthForm
+        titleText={TITLE_TEXT}
         inputsData={INPUTS_DATA}
         onChange={handleChange}
         values={values}
