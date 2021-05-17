@@ -42,7 +42,14 @@
   border-radius: 5px;
   box-sizing: border-box;
   cursor: pointer;
+  padding: 0;
+  transition: opacity .3s ease;
 }
+
+.search-form__submit-button:hover {
+  opacity: .7;
+}
+
 
 .search-form__checkbox-label {
   font-family: 'Inter', Arial, sans-serif;
@@ -58,10 +65,7 @@
   position: relative;
   width: 174px;
   height: 20px;
-}
-
-.search-form__checkbox-label_focus {
-  outline: 1px solid #000000;
+  cursor: pointer;
 }
 
 .search-form__checkbox-input {
