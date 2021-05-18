@@ -88,7 +88,7 @@ class MainApi {
 
 
 const OPTIONS = {
-  baseUrl: 'http://localhost:3000',
+  baseUrl: 'api.movies-razorka.nomoredomains.icu',
   headers: {
     'Content-Type': 'application/json',
   },
