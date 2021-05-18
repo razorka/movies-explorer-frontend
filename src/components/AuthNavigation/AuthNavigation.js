@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-const AuthNavigation = React.memo((props) => {
+const AuthNavigation = React.memo(() => {
   return (
     <nav
       className="auth-navigation"
@@ -9,14 +9,12 @@ const AuthNavigation = React.memo((props) => {
       <NavLink
         className="auth-navigation__link"
         to="/signup"
-        onClick={props.onSignup}
       >
         Регистрация
       </NavLink>
       <NavLink
         className="auth-navigation__link"
         to="/signin"
-        onClick={props.onSignin}
       >
         Войти
       </NavLink>

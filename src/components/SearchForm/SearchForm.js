@@ -8,7 +8,9 @@ import SubmitButton from "../SubmitButton/SubmitButton";
 
 import useFormWithValidation from '../../hooks/useFormWithValidation';
 
-function SearchForm() {
+function SearchForm({
+  onSubmit,
+}) {
 
   const {
     values,
@@ -19,7 +21,7 @@ function SearchForm() {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    console.table(values);
+    onSubmit(values);
     resetForm();
   };
 

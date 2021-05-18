@@ -27,6 +27,16 @@
   flex: 1;
 }
 
+.profile-form__input-error {
+  text-align: left;
+  font-family: 'Inter', Arial, sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 10px;
+  line-height: 1.2;
+  color: #EE3465;
+}
+
 .profile-form__input-container {
   padding-bottom: 16px;
   margin-bottom: 17px;

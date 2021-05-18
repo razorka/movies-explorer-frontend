@@ -10,99 +10,73 @@ import SearchForm from '../SearchForm/SearchForm';
 
 import ShowMoreButton from '../ShowMoreButton/ShowMoreButton';
 
-import MovieCardImage from '../../images/master.png';
+import MOVIES_ERRORS_TEXTS from '../../constants/movies-errors-texts';
 
-function Movies() {
+function Movies({
+  isLoadingData,
+  resStatus,
+  moviesData,
+  onSubmit,
+  onSaveMovie,
+  onDeleteSavedMovie,
+}) {
 
 
 
   let location = useLocation();
 
-  const [isLoadingData, setIsLoadingData] = React.useState(true);
+  const [isMoviesApiError, setIsMoviesApiError] = React.useState(false);
 
-  const MOVIES_CARD_LIST_DATA = [
-    {
-      id: 1,
-      title: 'Мастер и Маргарита',
-      subtitle: '8ч 20м',
-      imageAlt: 'кадр из фильма',
-      imageSrc: MovieCardImage,
-      isMarked: true,
-    },
-    {
-      id: 2,
-      title: 'Мастер и Маргарита',
-      subtitle: '8ч 20м',
-      imageAlt: 'кадр из фильма',
-      imageSrc: MovieCardImage,
-      isMarked: false,
-    },
-    {
-      id: 3,
-      title: 'Мастер и Маргарита',
-      subtitle: '8ч 20м',
-      imageAlt: 'кадр из фильма',
-      imageSrc: MovieCardImage,
-      isMarked: false,
-    },
-    {
-      id: 4,
-      title: 'Мастер и Маргарита',
-      subtitle: '8ч 20м',
-      imageAlt: 'кадр из фильма',
-      imageSrc: MovieCardImage,
-      isMarked: true,
-    },
-    {
-      id: 5,
-      title: 'Мастер и Маргарита',
-      subtitle: '8ч 20м',
-      imageAlt: 'кадр из фильма',
-      imageSrc: MovieCardImage,
-      isMarked: false,
-    },
-    {
-      id: 6,
-      title: 'Мастер и Маргарита',
-      subtitle: '8ч 20м',
-      imageAlt: 'кадр из фильма',
-      imageSrc: MovieCardImage,
-      isMarked: true,
-    },
-    {
-      id: 7,
-      title: 'Мастер и Маргарита',
-      subtitle: '8ч 20м',
-      imageAlt: 'кадр из фильма',
-      imageSrc: MovieCardImage,
-      isMarked: true,
-    },
-  ];
+  const handleSubmit = (data) => {
+    console.log(data);
+    onSubmit(data);
+  }
+
+  const handleErrors = () => {
+    if (resStatus) {
+      switch (resStatus) {
+        case 200:
+          setIsMoviesApiError(false);
+          break;
+        default:
+          setIsMoviesApiError(true);
+          break;
+      };
+    };
+  };
 
   React.useEffect(() => {
-    const loadingDataTimeout = setTimeout(() => {
-      setIsLoadingData(false);
-    }, 1500);
-
-    return () => {
-      clearTimeout(loadingDataTimeout);
-    };
-  }, [])
+    handleErrors();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resStatus])
 
   return (
     <main>
-      <SearchForm />
+      <SearchForm
+        onSubmit={handleSubmit}
+      />
       {isLoadingData ? (
         <Preloader />
       ) : (
         <>
-          <MoviesCardList
-            data={MOVIES_CARD_LIST_DATA}
-            locationPathname={location.pathname}
-          />
-          <ShowMoreButton
-            onClick={() => console.log('Show more')}
-          />
+          {isMoviesApiError ? (
+            <p>
+              {MOVIES_ERRORS_TEXTS.BASE_ERROR}
+            </p>
+          ) : (
+            <>
+              <MoviesCardList
+                data={moviesData}
+                locationPathname={location.pathname}
+                onSaveMovie={onSaveMovie}
+                onDeleteSavedMovie={onDeleteSavedMovie}
+              />
+              <ShowMoreButton
+                onClick={() => console.log('Show more')}
+              />
+            </>
+          )}
+
         </>
       )}
     </main>

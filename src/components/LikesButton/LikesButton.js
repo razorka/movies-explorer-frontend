@@ -6,22 +6,35 @@ import { ReactComponent as RemoveLikesButtonIcon } from '../../images/remove-lik
 
 function LikesButton({
   className,
-  ariaLabel,
   onClick,
   locationPathname,
-  isMarked,
+  isSaved,
 }) {
+
+  const [buttonLabel, setButtonLabel] = React.useState('');
+
+  const DELETE_LABEL = 'Удалить из избранного';
+  const ADD_LEBEL = 'Добавить в избранное';
+
+  React.useEffect(() => {
+    if (locationPathname === '/saved-movies') {
+      setButtonLabel(DELETE_LABEL);
+    } else if (locationPathname === '/movies') {
+      setButtonLabel(isSaved ? DELETE_LABEL : ADD_LEBEL)
+    }
+  }, [isSaved, locationPathname])
+
   return (
     <button
       className={className}
-      aria-label={ariaLabel}
+      aria-label={buttonLabel}
       onClick={onClick}
     >
       {locationPathname === '/saved-movies' ? (
         <RemoveLikesButtonIcon />
       )
       :
-      locationPathname === '/movies' && isMarked ? (
+      locationPathname === '/movies' && isSaved ? (
         <AddLikesButtonIconMarked />
       ) : (
         <AddLikesButtonIcon />

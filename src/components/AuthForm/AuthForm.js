@@ -14,6 +14,8 @@ import AuthError from '../AuthError/AuthError';
 
 import RouteLink from '../RouteLink/RouteLink';
 
+import Preloader from '../Preloader/Preloader';
+
 function AuthForm({
   titleText,
   inputsData,
@@ -26,6 +28,8 @@ function AuthForm({
   routeLinkSettings,
   formIsValid,
   authErrorText,
+  isAuthError,
+  isLoadingData,
 }) {
 
   const FORM_STYLE_SETTINGS = {
@@ -60,6 +64,7 @@ function AuthForm({
         className={FORM_STYLE_SETTINGS.errorText}
         aria-live="polite"
       >
+        {item.regexp && errors[item.name] && item.customErrorMessage}
         {errors[item.name]}
       </span>
     </div>
@@ -81,17 +86,20 @@ function AuthForm({
         </div>
         <fieldset
           className={FORM_STYLE_SETTINGS.formInputFieldset}
+          disabled={isLoadingData}
       >
         {formInputsMarkup}
-        <AuthError
-          errorText={authErrorText}
-        />
+        {isAuthError && (
+          <AuthError
+            errorText={authErrorText}
+          />
+        )}
         </fieldset>
       <div
         className={FORM_STYLE_SETTINGS.buttonContainer}
       >
         <SubmitButton
-          disabled={!formIsValid}
+          disabled={!formIsValid || isLoadingData}
           settings={submitButtonSettings}
           className={FORM_STYLE_SETTINGS.submitButton}
         />
@@ -104,6 +112,7 @@ function AuthForm({
           />
         </FormAuthQuestion>
       </div>
+      {isLoadingData && (<Preloader />)}
     </form>
   )
 }

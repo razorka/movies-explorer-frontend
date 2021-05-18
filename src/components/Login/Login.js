@@ -4,7 +4,13 @@ import AuthForm from '../AuthForm/AuthForm';
 
 import useFormWithValidation from '../../hooks/useFormWithValidation';
 
-function Login() {
+import LOGIN_ERRORS_TEXTS from '../../constants/login-errors-texts';
+
+function Login({ onSignin, authResStatus, tokenResStatus, isLoadingSignin }) {
+
+  const [isAuthError, setIsAuthError] = React.useState(false);
+
+  const [authErrorText, setAuthErrorText] = React.useState(null);
 
   const {
     values,
@@ -16,7 +22,7 @@ function Login() {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    console.table(values);
+    onSignin(values);
     resetForm();
   };
 
@@ -62,13 +68,57 @@ function Login() {
 
   const TITLE_TEXT = 'Рады видеть!';
 
-  const AUTH_ERROR_TEXT = 'Что-то пошло не так...';
-
   const LOGIN_STYLE_SETTINGS = {
     main: 'login',
     header: 'register__header',
     title: 'register__title',
   };
+
+  const errorHandler = () => {
+    if (tokenResStatus) {
+      switch (tokenResStatus) {
+        case 400:
+          setIsAuthError(true);
+          setAuthErrorText(LOGIN_ERRORS_TEXTS.TOKEN_BAD_REQUEST);
+          break;
+        case 401:
+          setIsAuthError(true);
+          setAuthErrorText(LOGIN_ERRORS_TEXTS.TOKEN_UNAUTHORIZED)
+          break;
+        case 500:
+          setIsAuthError(true);
+        setAuthErrorText(LOGIN_ERRORS_TEXTS.INTERNAL_SERVER);
+        break;
+        default:
+          break;
+      };
+    }
+
+    if (authResStatus) {
+      switch (authResStatus) {
+        case 400:
+        case 401:
+          setIsAuthError(true);
+          setAuthErrorText(LOGIN_ERRORS_TEXTS.BAD_REQUEST);
+          break;
+        case 500:
+          setIsAuthError(true);
+          setAuthErrorText(LOGIN_ERRORS_TEXTS.INTERNAL_SERVER);
+          break;
+          case 200:
+            setIsAuthError(false);
+            setAuthErrorText('');
+            break;
+        default:
+          break;
+      };
+    };
+  };
+
+  React.useEffect(() => {
+    errorHandler();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [tokenResStatus, authResStatus]);
 
   return (
     <main
@@ -85,7 +135,9 @@ function Login() {
         submitButtonSettings={SUBMIT_BUTTON_SETTINGS}
         formAuthQuestionSettings={FORM_AUTH_QUESTION_SETTINGS}
         formIsValid={isValid}
-        authErrorText={AUTH_ERROR_TEXT}
+        authErrorText={authErrorText}
+        isAuthError={isAuthError}
+        isLoadingData={isLoadingSignin}
       />
     </main>
   )
