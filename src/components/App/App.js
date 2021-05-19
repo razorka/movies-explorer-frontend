@@ -37,8 +37,6 @@ import Footer from '../Footer/Footer';
 
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
-import Preloader from '../Preloader/Preloader';
-
 import Menu from '../Menu/Menu';
 
 import NotificationModal from '../NotificationModal/NotificationModal';
@@ -360,11 +358,8 @@ function App() {
             exact
             path="/"
           >
-            {isLoadingData ? (
-              <Preloader />
-            ) : (
-              <Main />
-            )}
+        <Main />
+            )
 
           </Route>
           <ProtectedRoute
