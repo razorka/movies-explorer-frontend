@@ -21,13 +21,15 @@ function Profile({
 
   const [updateUserProfileErrorText, setUpdateUserProfileErrorText] = React.useState('');
 
+  const [formIsValid, setFormIsValid] = React.useState(false);
+
   const {
     values,
     errors,
     isValid,
     handleChange,
     resetForm
-  } = useFormWithValidation({currentUserData});
+  } = useFormWithValidation({});
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
@@ -92,10 +94,21 @@ function Profile({
     }
   }, [currentUserData, resetForm])
 
+  React.useEffect(() => {
+    setFormIsValid(isValid);
+  }, [isValid, values])
+
+  React.useEffect(() => {
+    if (currentUserData.name === values.name && currentUserData.email === values.email) {
+      setFormIsValid(false);
+    }
+  }, [currentUserData, values])
+
   const errorHandler = () => {
     if (updUserResStatus) {
       switch (updUserResStatus) {
         case 400:
+        case 404:
           setIsUpdateUserProfileError(true);
           setUpdateUserProfileErrorText(UPDATE_PROFILE_ERRORS_TEXTS.BAD_REQUEST);
           break;
@@ -108,6 +121,8 @@ function Profile({
           setUpdateUserProfileErrorText('');
           break;
         default:
+          setIsUpdateUserProfileError(true);
+          setUpdateUserProfileErrorText(UPDATE_PROFILE_ERRORS_TEXTS.BASE_ERROR);
           break;
       };
     };
@@ -129,7 +144,7 @@ function Profile({
         errors={errors}
         onSubmit={handleSubmit}
         submitButtonSettings={SUBMIT_BUTTON_SETTINGS}
-        formIsValid={isValid}
+        formIsValid={formIsValid}
         isEdited={isEdited}
         onToggleEditableProfile={handleToggleEditableProfile}
         profileEditButtonSettings={PROFILE_EDIT_BUTTON_SETTINGS}

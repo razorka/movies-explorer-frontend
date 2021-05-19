@@ -23,7 +23,6 @@ function Login({ onSignin, authResStatus, tokenResStatus, isLoadingSignin }) {
   const handleSubmit = (evt) => {
     evt.preventDefault();
     onSignin(values);
-    resetForm();
   };
 
   const INPUTS_DATA = [
@@ -87,9 +86,16 @@ function Login({ onSignin, authResStatus, tokenResStatus, isLoadingSignin }) {
           break;
         case 500:
           setIsAuthError(true);
-        setAuthErrorText(LOGIN_ERRORS_TEXTS.INTERNAL_SERVER);
-        break;
+          setAuthErrorText(LOGIN_ERRORS_TEXTS.INTERNAL_SERVER);
+          break;
+          case 200:
+            setIsAuthError(false);
+            setAuthErrorText('');
+            resetForm();
+            break;
         default:
+          setIsAuthError(true);
+          setAuthErrorText(LOGIN_ERRORS_TEXTS.TOKEN_BAD_REQUEST);
           break;
       };
     }
@@ -108,8 +114,11 @@ function Login({ onSignin, authResStatus, tokenResStatus, isLoadingSignin }) {
           case 200:
             setIsAuthError(false);
             setAuthErrorText('');
+            resetForm();
             break;
         default:
+          setIsAuthError(true);
+          setAuthErrorText(LOGIN_ERRORS_TEXTS.BAD_REQUEST);
           break;
       };
     };
@@ -118,7 +127,7 @@ function Login({ onSignin, authResStatus, tokenResStatus, isLoadingSignin }) {
   React.useEffect(() => {
     errorHandler();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [tokenResStatus, authResStatus]);
+}, [authResStatus, tokenResStatus]);
 
   return (
     <main

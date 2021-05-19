@@ -19,12 +19,13 @@ function Register({ onSignup, regResStatus, isLoadingSignup }) {
     handleChange,
     resetForm
   } = useFormWithValidation({});
+
   const handleSubmit = (evt) => {
     evt.preventDefault();
     onSignup(values);
     setRegistrationErrorText(null);
-    resetForm();
   };
+
   const INPUTS_DATA = [
     {
       key: 1,
@@ -97,8 +98,11 @@ function Register({ onSignup, regResStatus, isLoadingSignup }) {
         case 200:
           setIsRegistrationError(false);
           setRegistrationErrorText('');
+          resetForm();
           break;
         default:
+          setIsRegistrationError(true);
+          setRegistrationErrorText(REGISTRATION_ERRORS_TEXTS.BAD_REQUEST);
           break;
       };
     };
