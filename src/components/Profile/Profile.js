@@ -115,8 +115,7 @@ function Profile({
 
   React.useEffect(() => {
     errorHandler();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updUserResStatus]);
+   });
 
   return (
     <main

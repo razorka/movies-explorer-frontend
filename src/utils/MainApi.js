@@ -88,7 +88,7 @@ class MainApi {
 
 
 const OPTIONS = {
-  baseUrl: 'api.movies-razorka.nomoredomains.icu',
+  baseUrl: 'https://api.movies-razorka.nomoredomains.icu',
   headers: {
     'Content-Type': 'application/json',
   },

@@ -2,10 +2,8 @@ import React from 'react';
 
 import MainArticle from '../MainArticle/MainArticle';
 
-// eslint-disable-next-line no-unused-vars
 import getFullImageUrl from '../../utils/getFullImageUrl';
 
-// eslint-disable-next-line no-unused-vars
 import getTrailerUrl from '../../utils/getTrailerUrl';
 
 import convertTime from '../../utils/convertTime';
@@ -21,23 +19,25 @@ function MoviesCard({
   onDeleteSavedMovie,
 }) {
 
-  const handleClickFavouriteButton = () => {
+  // eslint-disable-next-line no-unused-vars
+  const [movieData, setMovieData] = React.useState({
+    country: data.country || 'Нет данных',
+    director: data.director || 'Нет данных',
+    duration: data.duration || 0,
+    year: data.year || 'Нет данных',
+    description: data.description || 'Нет данных',
+    image: getFullImageUrl(data),
+    trailer: getTrailerUrl(data),
+    nameRU: data.nameRU || 'Нет данных',
+    nameEN: data.nameEN || 'Нет данных',
+    movieId: data.id,
+    thumbnail: getFullImageUrl(data),
+  })
 
+  const handleClickFavouriteButton = () => {
     if (locationPathname === '/movies') {
       if (!data.saved) {
-        onSaveMovie({
-          country: data.country,
-          director: data.director,
-          duration: data.duration,
-          year: data.year,
-          description: data.description,
-          image: data.image,
-          trailer: data.trailerLink,
-          nameRU: data.nameRU,
-          nameEN: data.nameEN,
-          movieId: data.id,
-          thumbnail: data.image,
-        });
+        onSaveMovie(movieData);
       } else {
         onDeleteSavedMovie(data._id);
       }
@@ -61,7 +61,7 @@ function MoviesCard({
 
   return (
     <MainArticle
-    id={data._id}
+    id={data._id || movieData.movieId}
       className={MOVIES_CARD_STYLE_SETTINGS.article}
     >
       <MainArticle.Section
@@ -69,8 +69,8 @@ function MoviesCard({
       >
         <img
           className={MOVIES_CARD_STYLE_SETTINGS.image}
-          alt={data.nameEN}
-          src={data.image}
+          alt={movieData.nameRU || movieData.nameEN}
+          src={movieData.image}
         />
       </MainArticle.Section>
       <MainArticle.Section
@@ -82,7 +82,7 @@ function MoviesCard({
           <h2
             className={MOVIES_CARD_STYLE_SETTINGS.title}
           >
-            {data.nameRU}
+            {movieData.nameRU || movieData.nameEN}
           </h2>
           <FavouritesButton
           className={MOVIES_CARD_STYLE_SETTINGS.favouriteButton}
@@ -94,7 +94,7 @@ function MoviesCard({
         <div
             className={MOVIES_CARD_STYLE_SETTINGS.subtitle}
           >
-            {convertTime(data.duration)}
+            {convertTime(movieData.duration)}
           </div>
       </MainArticle.Section>
     </MainArticle>

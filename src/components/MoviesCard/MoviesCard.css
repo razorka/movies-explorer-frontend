@@ -53,6 +53,8 @@
 
 .movies-card-article__image {
   width: 100%;
+  max-width: 364px;
+  height: 203px;
   object-fit: cover;
 }
 

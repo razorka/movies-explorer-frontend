@@ -3,6 +3,14 @@ import { Route, Switch, useRouteMatch, useHistory } from 'react-router-dom';
 
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 
+import AUTH_SUCCESS_TEXTS from '../../constants/auth-success-texts';
+
+import SAVE_MOVIE_ERROR_TEXTS from '../../constants/save-movie-error-texts';
+
+import DELETE_MOVIE_ERROR_TEXTS from '../../constants/delete-movie-error-texts';
+
+import PROFILE_UPDATE_SUCCESS_TEXT from '../../constants/profile-update-success-text';
+
 import moviesApi from '../../utils/MoviesApi';
 
 import searchFilter from '../../utils/searchFilter';
@@ -10,8 +18,6 @@ import searchFilter from '../../utils/searchFilter';
 import mainApi from '../../utils/MainApi';
 
 import Header from '../Header/Header';
-
-import Modal from '../Modal/Modal';
 
 import Profile from '../Profile/Profile';
 
@@ -29,109 +35,43 @@ import NotFound from '../NotFound/NotFound';
 
 import Footer from '../Footer/Footer';
 
-import MobileNavigation from '../MobileNavigation/MobileNavigation';
-
-import MobileAccountLink from '../MobileAccountLink/MobileAccountLink';
-
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
 import Preloader from '../Preloader/Preloader';
+
+import Menu from '../Menu/Menu';
+
+import NotificationModal from '../NotificationModal/NotificationModal';
 
 function App() {
 
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [isLoadingData, setIsLoadingData] = React.useState(true);
+  const [menuIsOpen, setMenuIsOpen] = React.useState(false);
+  const [notificationModalIsOpen, setNotificationModalIsOpen] = React.useState(false);
+  const [notificationText, setNotificationText] = React.useState('');
+  const [currentUserData, setCurrentUserData] = React.useState({});
+  const [foundSavedMoviesData, setFoundSavedMoviesData] = React.useState([]);
+  const [isSavedMoviesEmpty, setIsSavedMoviesEmpty] = React.useState(false);
+  const [isNoMoviesFound, setIsNoMoviesFound] = React.useState(false);
+  const [isNoSavedMoviesFound, setIsNoSavedMoviesFound] = React.useState(false);
   const [isLoadingMoviesData, setIsLoadingMoviesData] = React.useState(false);
   const [isLoadingSignin, setIsLoadingSignin] = React.useState(false);
   const [isLoadingSignup, setIsLoadingSignup] = React.useState(false);
   const [isLoadingUpdateCurrentUser, setIsLoadingUpdateCurrentUser] = React.useState(false);
-  const [menuIsOpen, setMenuIsOpen] = React.useState(false);
-  const [currentUserData, setCurrentUserData] = React.useState({});
-  const [savedMoviesData, setSavedMoviesData] = React.useState([]);
   const [moviesData, setMoviesData] = React.useState([]);
   const [authResStatus, setAuthResStatus] = React.useState(null);
   const [tokenAuthResStatus, setTokenAuthResStatus] = React.useState(null);
   const [registrationResStatus, setRegistrationResStatus] = React.useState(null);
   const [updateCurrentUserResStatus, setUpdateCurrentUserResStatus] = React.useState(null);
   const [moviesApiResStatus, setMoviesApiResStatus] = React.useState(null);
-  // eslint-disable-next-line no-unused-vars
-  const [saveFavouriteMovieResStatus, setSaveFavouriteMovieResStatus] = React.useState(null);
-  // eslint-disable-next-line no-unused-vars
   const [getSavedMoviesResStatus, setGetSavedMoviesResStatus] = React.useState(null);
   // eslint-disable-next-line no-unused-vars
   const [deleteSavedMovieResStatus, setDeleteSavedMovieResStatus] = React.useState(null);
+  // eslint-disable-next-line no-unused-vars
+  const [saveFavouriteMovieResStatus, setSaveFavouriteMovieResStatus] = React.useState(null);
 
   const history = useHistory();
-
-  const saveCurrentUserDataToLocalStorage = (data) => {
-    const { name, email, _id } = data;
-    localStorage.setItem('userName', name);
-    localStorage.setItem('userEmail', email);
-    localStorage.setItem('userId', _id);
-  }
-
-  const handleResetResStatus = () => {
-    if (
-      tokenAuthResStatus ||
-      updateCurrentUserResStatus ||
-      registrationResStatus ||
-      authResStatus
-    ) {
-      setUpdateCurrentUserResStatus(null);
-      setRegistrationResStatus(null);
-      setTokenAuthResStatus(null);
-      setAuthResStatus(null);
-    };
-  };
-
-  const tokenCheck = React.useCallback(
-    () => {
-      const token = localStorage.getItem('jwt');
-
-      if (token) {
-        setIsLoadingData(true);
-        mainApi.checkToken(token)
-          .then(
-            (res) => {
-              setTokenAuthResStatus(res.status);
-              setLoggedIn(true);
-              setCurrentUserData(res.data);
-              saveCurrentUserDataToLocalStorage(res.data);
-            },
-            (err) => {
-              setTokenAuthResStatus(err);
-            },
-          )
-          .finally(() => {
-            setIsLoadingData(false);
-          })
-      }
-    }, []
-  );
-
-  React.useEffect(() => {
-    tokenCheck();
-    handleResetResStatus();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [history.location])
-
-  const handleSignin = (data) => {
-    setIsLoadingSignin(true);
-    mainApi.authorize(data)
-      .then((res) => {
-        setAuthResStatus(res.status);
-        localStorage.setItem('jwt', res.data.token);
-        setLoggedIn(true);
-        tokenCheck();
-        history.push('/movies');
-      })
-      .catch((err) => {
-        setAuthResStatus(err);
-      })
-      .finally(() => {
-        setIsLoadingSignin(false);
-      })
-  };
 
   const handleSignup = (data) => {
     setIsLoadingSignup(true);
@@ -151,12 +91,52 @@ function App() {
       })
   };
 
+  const handleSignin = (data) => {
+    setIsLoadingSignin(true);
+    mainApi.authorize(data)
+      .then((res) => {
+        setAuthResStatus(res.status);
+        localStorage.setItem('jwt', res.data.token);
+        setLoggedIn(true);
+        history.push('/movies');
+        setOpenNotificationModal();
+        setNotificationText(AUTH_SUCCESS_TEXTS.BASE_TEXT);
+      })
+      .then(() => {
+        checkToken();
+      })
+      .catch((err) => {
+        setAuthResStatus(err);
+      })
+      .finally(() => {
+        setIsLoadingSignin(false);
+      })
+  };
+
   const handleSignOut = (evt) => {
     evt.preventDefault();
     setLoggedIn(false);
-    localStorage.removeItem('jwt');
+    setMoviesData([]);
+    setCurrentUserData({});
+    setFoundSavedMoviesData([]);
+    localStorage.clear();
     history.push('/');
   };
+
+  const checkToken = () => {
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      mainApi.checkToken(token)
+        .then((res) => {
+          setTokenAuthResStatus(res.status);
+          setCurrentUserData(res.data);
+          setLoggedIn(true);
+        })
+        .catch((err) => {
+          setTokenAuthResStatus(err)
+        })
+    }
+  }
 
   const handleUpdateCurrenUser = (data) => {
     const token = localStorage.getItem('jwt');
@@ -166,7 +146,9 @@ function App() {
         .then((res) => {
           setCurrentUserData(res.data);
           setUpdateCurrentUserResStatus(res.status);
-          saveCurrentUserDataToLocalStorage(res.data);
+          localStorage.setItem('currentUserData', JSON.stringify(res.data));
+          setOpenNotificationModal();
+          setNotificationText(PROFILE_UPDATE_SUCCESS_TEXT.BASE_TEXT);
         })
         .catch((err) => {
           setUpdateCurrentUserResStatus(err);
@@ -177,40 +159,23 @@ function App() {
       };
     };
 
-    const getSavedMoviesIds = () => {
-      const savedMoviesIds = [];
-
-      savedMoviesData.forEach((savedMovie) => {
-        savedMoviesIds.push(savedMovie.movieId);
-      });
-
-      return savedMoviesIds;
-    };
-
-    const markAsSaved = (foundMoviesArr) => {
-      const savedMoviesIdsArr = getSavedMoviesIds();
-      foundMoviesArr.forEach((foundMovie) => {
-        foundMovie.saved = savedMoviesIdsArr.some((savedMovieId) => savedMovieId === foundMovie.id);
-      })
-
-      savedMoviesData.forEach((savedMovie) => {
-        foundMoviesArr.forEach((foundMovie) => {
-          if (foundMovie.id === savedMovie.movieId) {
-            foundMovie._id = savedMovie._id;
-          }
-        })
-      })
-
-      return foundMoviesArr;
-    }
-
-    const handleSearchMoviesData = (searchQuery) => {
+    const handleSearchMoviesData = (searchQueries = {}) => {
       setIsLoadingMoviesData(true);
       moviesApi.getMoviesData()
         .then((res) => {
           setMoviesApiResStatus(res.status);
-          const foundMoviesArr = searchFilter(searchQuery, res.data);
-          setMoviesData(foundMoviesArr);
+
+          const moviesData = res.data;
+
+          const filteredMovies = searchFilter(searchQueries, moviesData);
+
+          if (filteredMovies.length === 0) {
+            setIsNoMoviesFound(true);
+          } else {
+            setIsNoMoviesFound(false);
+          }
+
+          setMoviesData(markAsSaved(filteredMovies));
         })
         .catch((err) => {
           console.log(err);
@@ -221,6 +186,77 @@ function App() {
         })
     };
 
+    const handleSearchSavedMoviesData = (searchQueries = {}) => {
+      const token = localStorage.getItem('jwt');
+
+      if (token){
+        setIsLoadingMoviesData(true);
+        mainApi.getSavedMovies(token)
+          .then((res) => {
+            setGetSavedMoviesResStatus(res.status);
+
+            if (res.data.length === 0) {
+              setIsSavedMoviesEmpty(true);
+              setFoundSavedMoviesData(res.data);
+              return;
+            } else {
+              setIsSavedMoviesEmpty(false);
+            }
+
+            const savedMoviesData = res.data.reverse();
+
+            const filteredSavedMovies = searchFilter(searchQueries, savedMoviesData);
+
+            if (filteredSavedMovies.length === 0) {
+              setIsNoSavedMoviesFound(true);
+            } else {
+              setIsNoSavedMoviesFound(false);
+            }
+
+            setFoundSavedMoviesData(filteredSavedMovies)
+          })
+          .catch((err) => {
+            console.log(err);
+            setMoviesApiResStatus(err)
+          })
+          .finally(() => {
+            setIsLoadingMoviesData(false);
+          })
+      }
+    }
+
+    React.useEffect(() => {
+      checkToken();
+      handleSearchSavedMoviesData();
+    }, [])
+
+    const getInitialSavedMoviesIds = () => {
+      const initialSavedMoviesIds = [];
+
+      foundSavedMoviesData.forEach((savedMovie) => {
+        initialSavedMoviesIds.push(savedMovie.movieId);
+      });
+
+      return initialSavedMoviesIds;
+    };
+
+    const markAsSaved = (foundMoviesArr) => {
+      const initialSavedMoviesIdsArr = getInitialSavedMoviesIds();
+      foundMoviesArr.forEach((foundMovie) => {
+        foundMovie.saved = initialSavedMoviesIdsArr.some((savedMovieId) => savedMovieId === foundMovie.id);
+      })
+
+      foundSavedMoviesData.forEach((savedMovie) => {
+        foundMoviesArr.forEach((foundMovie) => {
+          if (foundMovie.id === savedMovie.movieId) {
+            foundMovie._id = savedMovie._id;
+          }
+        })
+      })
+
+      return foundMoviesArr;
+    }
+
     const handleSaveFavouriteMovie = (data) => {
       const token = localStorage.getItem('jwt');
       if (token) {
@@ -230,28 +266,15 @@ function App() {
           })
           .catch((err) => {
             setSaveFavouriteMovieResStatus(err);
+            setOpenNotificationModal();
+            setNotificationText(`${SAVE_MOVIE_ERROR_TEXTS.BASE_TEXT} ${err}`)
             console.log(err);
           })
           .finally(() => {
-            handleGetSavedMovies();
+            handleSearchSavedMoviesData();
           })
       } else {
         history.push('/signin');
-      };
-    };
-
-    const handleGetSavedMovies = () => {
-      const token = localStorage.getItem('jwt');
-      if (token) {
-        mainApi.getSavedMovies(token)
-          .then((res) => {
-            setSavedMoviesData(res.data.reverse());
-            setGetSavedMoviesResStatus(res.status);
-          })
-          .catch((err) => {
-            setGetSavedMoviesResStatus(err);
-            console.log(err);
-          })
       };
     };
 
@@ -277,10 +300,12 @@ function App() {
           })
           .catch((err) => {
             setDeleteSavedMovieResStatus(err);
+            setOpenNotificationModal();
+            setNotificationText(`${DELETE_MOVIE_ERROR_TEXTS.BASE_TEXT} ${err}`)
             console.log(err);
           })
           .finally(() => {
-            handleGetSavedMovies();
+            handleSearchSavedMoviesData();
           })
       };
   }
@@ -293,6 +318,15 @@ function App() {
     setMenuIsOpen(false);
   };
 
+  const setOpenNotificationModal = () => {
+    setNotificationModalIsOpen(true);
+  }
+
+  const setCloseNotificationModal = () => {
+    setNotificationText('');
+    setNotificationModalIsOpen(false);
+  }
+
   const exclusionRoutesPathsArray = [
 
     '/signin',
@@ -304,10 +338,6 @@ function App() {
     '/signup',
     '/profile',
   ];
-
-  React.useEffect(() => {
-    handleGetSavedMovies();
-  }, [])
 
   React.useEffect(() => {
 
@@ -346,8 +376,8 @@ function App() {
             redirectTo="/"
             loggedIn={loggedIn}
             component={Movies}
+            isNoMoviesFound={isNoMoviesFound}
             isLoadingData={isLoadingMoviesData}
-            moviesData={moviesData}
             resStatus={moviesApiResStatus}
             onSubmit={handleSearchMoviesData}
             // eslint-disable-next-line react/jsx-no-duplicate-props
@@ -359,9 +389,14 @@ function App() {
             path="/saved-movies"
             redirectTo="/"
             loggedIn={loggedIn}
+            isSavedMoviesEmpty={isSavedMoviesEmpty}
             component={SavedMovies}
-            savedMoviesData={savedMoviesData}
+            isLoadingData={isLoadingMoviesData}
+            isNoSavedMoviesFound={isNoSavedMoviesFound}
+            foundSavedMoviesData={foundSavedMoviesData}
+            handleSearchSavedMoviesData={handleSearchSavedMoviesData}
             onDeleteSavedMovie={handleDeleteSavedMovie}
+            getSavedMoviesResStatus={getSavedMoviesResStatus}
           />
           <ProtectedRoute
             path="/profile"
@@ -403,22 +438,17 @@ function App() {
           <Footer />
         )}
         {menuIsOpen && (
-          <Modal
-            modalIsOpen={menuIsOpen}
-            onModalClose={setCloseMenu}
-          >
-            <Modal.Header />
-            <Modal.Body>
-              <MobileNavigation
-                onModalClose={setCloseMenu}
-              />
-            </Modal.Body>
-            <Modal.Footer>
-              <MobileAccountLink
-                onModalClose={setCloseMenu}
-              />
-            </Modal.Footer>
-          </Modal>
+          <Menu
+          isOpen={menuIsOpen}
+          onClose={setCloseMenu}
+        />
+      )}
+      {notificationModalIsOpen && (
+        <NotificationModal
+          isOpen={notificationModalIsOpen}
+          onClose={setCloseNotificationModal}
+          notificationText={notificationText}
+        />
         )}
       </div>
     </CurrentUserContext.Provider>

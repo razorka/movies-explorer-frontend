@@ -40,7 +40,6 @@ function SearchForm({
     ariaLabel: 'поиск фильма',
     placeholder: 'Фильм',
     name: 'search',
-    minLength: 1,
     maxLength: 30,
     required: false,
   };
