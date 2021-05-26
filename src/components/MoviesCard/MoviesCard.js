@@ -2,19 +2,48 @@ import React from 'react';
 
 import MainArticle from '../MainArticle/MainArticle';
 
-import FavoritesButton from '../LikesButton/LikesButton';
+import getFullImageUrl from '../../utils/getFullImageUrl';
+
+import getTrailerUrl from '../../utils/getTrailerUrl';
+
+import convertTime from '../../utils/convertTime';
+
+import FavouritesButton from '../LikesButton/LikesButton';
 
 
 
 function MoviesCard({
   data,
   locationPathname,
+  onSaveMovie,
+  onDeleteSavedMovie,
 }) {
 
-  const [isMarked, setIsMarked] = React.useState(data.isMarked);
+  // eslint-disable-next-line no-unused-vars
+  const [movieData, setMovieData] = React.useState({
+    country: data.country || 'Нет данных',
+    director: data.director || 'Нет данных',
+    duration: data.duration || 0,
+    year: data.year || 'Нет данных',
+    description: data.description || 'Нет данных',
+    image: getFullImageUrl(data),
+    trailer: getTrailerUrl(data),
+    nameRU: data.nameRU || 'Нет данных',
+    nameEN: data.nameEN || 'Нет данных',
+    movieId: data.id,
+    thumbnail: getFullImageUrl(data),
+  })
 
-  const handleMarkMovieCard = () => {
-    setIsMarked(!isMarked);
+  const handleClickFavouriteButton = () => {
+    if (locationPathname === '/movies') {
+      if (!data.saved) {
+        onSaveMovie(movieData);
+      } else {
+        onDeleteSavedMovie(data._id);
+      }
+    } else if (locationPathname === '/saved-movies') {
+      onDeleteSavedMovie(data._id);
+    }
   };
 
   const MOVIES_CARD_STYLE_SETTINGS = {
@@ -25,24 +54,30 @@ function MoviesCard({
     subtitle: 'movies-card-article__subtitle',
     imageSection: 'movies-card-article__image-section',
     image: 'movies-card-article__image',
-    favoriteButton: 'movies-card-article__like-button',
-    removeFavoritesButtonIcon: 'movies-card-article__favorite-button-icon-remove',
-    addFavoritesButtonIcon: 'movies-card-article__favorite-button-icon-add',
+    favouriteButton: 'movies-card-article__like-button',
+    removeFavouritesButtonIcon: 'movies-card-article__favourite-button-icon-remove',
+    addFavouritesButtonIcon: 'movies-card-article__favourite-button-icon-add',
   };
 
   return (
     <MainArticle
-      id={data.id}
+    id={data._id || movieData.movieId}
       className={MOVIES_CARD_STYLE_SETTINGS.article}
     >
       <MainArticle.Section
         className={MOVIES_CARD_STYLE_SETTINGS.imageSection}
       >
-        <img
-          className={MOVIES_CARD_STYLE_SETTINGS.image}
-          alt={data.imageAlt}
-          src={data.imageSrc}
-        />
+        <a
+          href={movieData.trailer}
+          target='_blank'
+          aria-label={`Открыть трейлер фильма "${movieData.nameRU}" на youtube.com`} rel="noreferrer"
+        >
+          <img
+            className={MOVIES_CARD_STYLE_SETTINGS.image}
+            alt={movieData.nameRU || movieData.nameEN}
+            src={movieData.image}
+          />
+        </a>
       </MainArticle.Section>
       <MainArticle.Section
         className={MOVIES_CARD_STYLE_SETTINGS.annotation}
@@ -53,19 +88,19 @@ function MoviesCard({
           <h2
             className={MOVIES_CARD_STYLE_SETTINGS.title}
           >
-            {data.title}
+            {movieData.nameRU || movieData.nameEN}
           </h2>
-          <FavoritesButton
-          className={MOVIES_CARD_STYLE_SETTINGS.favoriteButton}
-          onClick={handleMarkMovieCard}
+          <FavouritesButton
+          className={MOVIES_CARD_STYLE_SETTINGS.favouriteButton}
+          onClick={handleClickFavouriteButton}
           locationPathname={locationPathname}
-          isMarked={isMarked}
+          isSaved={data.saved}
         />
         </div>
         <div
             className={MOVIES_CARD_STYLE_SETTINGS.subtitle}
           >
-            {data.subtitle}
+            {convertTime(movieData.duration)}
           </div>
       </MainArticle.Section>
     </MainArticle>

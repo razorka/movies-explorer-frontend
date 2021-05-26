@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/static/css/main.d2d8a883.chunk.css",
+    "main.js": "/static/js/main.7097ec5b.chunk.js",
+    "main.js.map": "/static/js/main.7097ec5b.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.116e80f9.js",
+    "runtime-main.js.map": "/static/js/runtime-main.116e80f9.js.map",
+    "static/js/2.cff2a048.chunk.js": "/static/js/2.cff2a048.chunk.js",
+    "static/js/2.cff2a048.chunk.js.map": "/static/js/2.cff2a048.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/main.d2d8a883.chunk.css.map": "/static/css/main.d2d8a883.chunk.css.map",
+    "static/js/2.cff2a048.chunk.js.LICENSE.txt": "/static/js/2.cff2a048.chunk.js.LICENSE.txt",
+    "static/media/index.css": "/static/media/header-menu-button.fe889bf9.svg",
+    "static/media/about-me.94421e74.jpg": "/static/media/about-me.94421e74.jpg",
+    "static/media/account-link-icon.70509039.svg": "/static/media/account-link-icon.70509039.svg",
+    "static/media/add-like-button-icon-active.439c814d.svg": "/static/media/add-like-button-icon-active.439c814d.svg",
+    "static/media/add-like-button-icon.140b7639.svg": "/static/media/add-like-button-icon.140b7639.svg",
+    "static/media/logo.6e5df113.svg": "/static/media/logo.6e5df113.svg",
+    "static/media/not-allowed-image.941a9e09.png": "/static/media/not-allowed-image.941a9e09.png",
+    "static/media/remove-like-button-icon.5ba7eaaf.svg": "/static/media/remove-like-button-icon.5ba7eaaf.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.116e80f9.js",
+    "static/js/2.cff2a048.chunk.js",
+    "static/css/main.d2d8a883.chunk.css",
+    "static/js/main.7097ec5b.chunk.js"
+  ]
+}

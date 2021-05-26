@@ -1,4 +1,8 @@
-Фронтэнд ПРоекта Movies-explorer
+Фронтэнд Проекта Movies-explorer
+
+Адрес Фронтэнда https://movies-razorka.nomoredomains.club
+
+
 
 
 

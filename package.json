@@ -16,7 +16,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "scp -r C:/Users/Nick/build/* razorka@84.252.135.36:/home/razorka/movies-explorer-frontend/"
   },
   "eslintConfig": {
     "extends": [

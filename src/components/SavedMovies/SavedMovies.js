@@ -6,48 +6,77 @@ import SearchForm from '../SearchForm/SearchForm';
 
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 
-import MovieCardImage from '../../images/master.png';
+import Notification from '../Notification/Notification';
 
-function SavedMovies() {
+import MOVIES_ERRORS_TEXTS from '../../constants/movies-errors-texts';
+
+import NO_MOVIES_FOUND_TEXT from '../../constants/no-movies-found-text';
+
+function SavedMovies({
+  onDeleteSavedMovie,
+  foundSavedMoviesData,
+  isSavedMoviesEmpty,
+  isLoadingData,
+  handleSearchSavedMoviesData,
+  getSavedMoviesResStatus,
+  isNoSavedMoviesFound,
+}) {
+
+  const [isMoviesApiError, setIsMoviesApiError] = React.useState(false);
+
+  const handleSubmit = (data) => {
+    handleSearchSavedMoviesData(data);
+  }
 
   let location = useLocation();
 
-  const MOVIES_CARD_LIST_DATA = [
-    {
-      id: 1,
-      title: 'Мастер и Маргарита',
-      subtitle: '8ч 20м',
-      imageAlt: 'кадр из фильма',
-      imageSrc: MovieCardImage,
-      isMarked: false,
-      isShortFilm: true,
-    },
-    {
-      id: 2,
-      title: 'Мастер и Маргарита',
-      subtitle: '8ч 20м',
-      imageAlt: 'кадр из фильма',
-      imageSrc: MovieCardImage,
-      isMarked: false,
-      isShortFilm: false,
-    },
-    {
-      id: 5,
-      title: 'Мастер и Маргарита',
-      subtitle: '8ч 20м',
-      imageAlt: 'кадр из фильма',
-      imageSrc: MovieCardImage,
-      isMarked: false,
-      isShortFilm: true,
-    },
-  ];
+  const handleErrors = () => {
+    if (getSavedMoviesResStatus) {
+      switch (getSavedMoviesResStatus) {
+        case 200:
+          setIsMoviesApiError(false);
+          break;
+        default:
+          setIsMoviesApiError(true);
+          break;
+      };
+    };
+  };
+
+  React.useEffect(() => {
+    handleErrors();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getSavedMoviesResStatus])
+
+  React.useEffect(() => {
+    handleSearchSavedMoviesData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <main>
-      <SearchForm />
+      <SearchForm
+        onSubmit={handleSubmit}
+      />
+      {!isLoadingData && isSavedMoviesEmpty && (
+        <Notification
+          text={NO_MOVIES_FOUND_TEXT.SAVED_IS_EMPTY}
+        />
+      )}
+      {!isLoadingData && isNoSavedMoviesFound && (
+        <Notification
+          text={NO_MOVIES_FOUND_TEXT.BASE_TEXT}
+        />
+      )}
+      {isMoviesApiError && (
+        <Notification
+          text={MOVIES_ERRORS_TEXTS.BASE_ERROR}
+        />
+      )}
       <MoviesCardList
-        data={MOVIES_CARD_LIST_DATA}
+        data={foundSavedMoviesData}
         locationPathname={location.pathname}
+        onDeleteSavedMovie={onDeleteSavedMovie}
       />
     </main>
   )

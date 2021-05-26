@@ -3,7 +3,15 @@ import React from 'react';
 import AuthForm from '../AuthForm/AuthForm';
 
 import useFormWithValidation from '../../hooks/useFormWithValidation';
-function Register() {
+
+import REGISTRATION_ERRORS_TEXTS from '../../constants/registration-errors-texts';
+
+function Register({ onSignup, regResStatus, isLoadingSignup }) {
+
+  const [isRegistrationError, setIsRegistrationError] = React.useState(false);
+
+  const [registrationErrorText, setRegistrationErrorText] = React.useState('');
+
   const {
     values,
     errors,
@@ -11,11 +19,13 @@ function Register() {
     handleChange,
     resetForm
   } = useFormWithValidation({});
+
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    console.table(values);
-    resetForm();
+    onSignup(values);
+    setRegistrationErrorText(null);
   };
+
   const INPUTS_DATA = [
     {
       key: 1,
@@ -24,9 +34,9 @@ function Register() {
       label: 'Имя',
       placeholder: 'Имя',
       name: 'name',
-      minLength: 1,
-      maxLength: 50,
       required: true,
+      regexp: '[a-zA-Z -]{1,50}',
+      customErrorMessage: 'Поле name может содержать только латиницу, пробел или дефис: a-zA-Z -',
     },
     {
       key: 2,
@@ -74,7 +84,34 @@ function Register() {
 
   const TITLE_TEXT = 'Добро пожаловать!';
 
-  const AUTH_ERROR_TEXT = 'Что-то пошло не так...';
+  const errorHandler = () => {
+    if (regResStatus) {
+      switch (regResStatus) {
+        case 409:
+          setIsRegistrationError(true);
+          setRegistrationErrorText(REGISTRATION_ERRORS_TEXTS.CONFLICT_EMAIL);
+          break;
+        case 400:
+          setIsRegistrationError(true);
+          setRegistrationErrorText(REGISTRATION_ERRORS_TEXTS.BAD_REQUEST);
+          break;
+        case 200:
+          setIsRegistrationError(false);
+          setRegistrationErrorText('');
+          resetForm();
+          break;
+        default:
+          setIsRegistrationError(true);
+          setRegistrationErrorText(REGISTRATION_ERRORS_TEXTS.BAD_REQUEST);
+          break;
+      };
+    };
+  };
+
+  React.useEffect(() => {
+    errorHandler();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [regResStatus]);
 
   return (
     <main
@@ -91,7 +128,9 @@ function Register() {
         formAuthQuestionSettings={FORM_AUTH_QUESTION_SETTINGS}
         routeLinkSettings={ROUTE_LINK_SETTINGS}
         formIsValid={isValid}
-        authErrorText={AUTH_ERROR_TEXT}
+        authErrorText={registrationErrorText}
+        isAuthError={isRegistrationError}
+        isLoadingData={isLoadingSignup}
       />
     </main>
   )
